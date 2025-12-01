@@ -1,0 +1,23 @@
+# Node modules
+client/node_modules
+server/node_modules
+
+# Build outputs
+client/dist
+server/dist
+
+# Environment
+.env
+server/.env
+client/.env
+
+# Logs
+logs
+*.log
+
+# System junk
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
