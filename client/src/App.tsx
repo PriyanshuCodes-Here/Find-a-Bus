@@ -9,7 +9,7 @@ import {
   Bell, 
   Navigation
 } from 'lucide-react';
-import { getBusInfo } from './Services/API';
+import { getBusInfo } from './services/api';
 
 
 /**

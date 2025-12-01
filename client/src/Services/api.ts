@@ -30,5 +30,4 @@ export const getAllBuses = async () => {
   }
 };
 
-// Add more API functions as needed
 export default api;
