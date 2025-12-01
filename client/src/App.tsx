@@ -9,6 +9,7 @@ import {
   Bell, 
   Navigation
 } from 'lucide-react';
+import { getBusInfo } from './Services/API';
 
 
 /**
@@ -90,6 +91,8 @@ const MockPhoneApp = () => {
 export default function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [backendData, setBackendData] = useState<any>(null);
+  const [isConnected, setIsConnected] = useState(false);
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -98,6 +101,20 @@ export default function App() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Test backend connection
+  useEffect(() => {
+    getBusInfo()
+      .then((data) => {
+        console.log('✅ Backend connected:', data);
+        setBackendData(data);
+        setIsConnected(true);
+      })
+      .catch((err) => {
+        console.error('❌ Backend connection failed:', err);
+        setIsConnected(false);
+      });
   }, []);
 
   const features = [
@@ -126,6 +143,23 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-800">
       
+      {/* Backend Connection Status (Dev Only) */}
+      <div className="fixed bottom-4 right-4 z-50">
+        <div className={`px-4 py-2 rounded-full shadow-lg text-sm font-semibold flex items-center gap-2 ${
+          isConnected ? 'bg-green-500 text-white' : 'bg-red-500 text-white'
+        }`}>
+          <span className="relative flex h-3 w-3">
+            <span className={`animate-ping absolute inline-flex h-full w-full rounded-full opacity-75 ${
+              isConnected ? 'bg-green-300' : 'bg-red-300'
+            }`}></span>
+            <span className={`relative inline-flex rounded-full h-3 w-3 ${
+              isConnected ? 'bg-green-200' : 'bg-red-200'
+            }`}></span>
+          </span>
+          {isConnected ? 'Backend Connected' : 'Backend Offline'}
+        </div>
+      </div>
+
       {/* Navigation */}
       <nav className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-white shadow-md py-3' : 'bg-transparent py-5'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
@@ -193,6 +227,16 @@ export default function App() {
               <p className="text-lg text-slate-600 mb-8 max-w-lg mx-auto lg:mx-0 leading-relaxed">
                 Join 2 million commuters who save time every day. Get accurate arrival times, live map tracking, and service alerts right in your pocket.
               </p>
+
+              {/* Show backend data if connected */}
+              {isConnected && backendData && (
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-left">
+                  <p className="text-sm font-semibold text-green-800 mb-2">🚀 Live from Backend:</p>
+                  <p className="text-xs text-green-700">Route {backendData.route} • ETA: {backendData.eta}</p>
+                  <p className="text-xs text-green-700">Next: {backendData.nextStop}</p>
+                </div>
+              )}
+
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <button className="bg-slate-900 text-white px-8 py-4 rounded-full font-bold hover:bg-slate-800 transition-all flex items-center justify-center gap-2 shadow-xl shadow-slate-200">
                   <Smartphone size={20} />
@@ -328,7 +372,7 @@ export default function App() {
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-4">
                 <button className="bg-white text-blue-600 px-8 py-4 rounded-full font-bold hover:bg-blue-50 transition-all flex items-center justify-center gap-2">
-                  <span className="text-xl"></span> App Store
+                  <span className="text-xl">🍎</span> App Store
                 </button>
                 <button className="bg-blue-700 border border-blue-500 text-white px-8 py-4 rounded-full font-bold hover:bg-blue-800 transition-all flex items-center justify-center gap-2">
                   <span className="text-xl">▶</span> Google Play
@@ -386,4 +430,3 @@ export default function App() {
     </div>
   );
 }
-
